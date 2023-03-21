@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "694186765975",
+    "project_id": "notfy-6607b",
+    "storage_bucket": "notfy-6607b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694186765975:android:82dc3b158342f0b2f283d2",
+        "android_client_info": {
+          "package_name": "com.notfy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "694186765975-crgd6oslq30tvr3c3nfervnmbucnopgt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.notfy",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "694186765975-5o6082as6eq5v2sdpldcspl1f2p9bq1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeQYmecofgoIZ4xBH9wLWmkA2wZer9nuk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "694186765975-5o6082as6eq5v2sdpldcspl1f2p9bq1p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
