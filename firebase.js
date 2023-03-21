@@ -13,3 +13,10 @@ export const signUpWithEmail = async (email, password) => {
     }
 }
 
+
+
+export const signInAuthWithEmailAndPassword = async (email, password) => {
+    if (!email || !password) return;
+
+    return await auth.signInWithEmailAndPassword(email, password);
+}
