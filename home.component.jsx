@@ -33,30 +33,14 @@ export default HomeScreen = () => {
             {
                 currentUser ? (
 
-                    <>
 
-                        {
-                            currentUser.title == 'teacher' ? (
-                                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                    <TouchableOpacity onPress={handleStudentsPress}>
-                                        <Text>Students</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={signOutHandler}><Text>Sign Out</Text></TouchableOpacity>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <TouchableOpacity onPress={handleStudentsPress}>
+                            <Text>Students</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={signOutHandler}><Text>Sign Out</Text></TouchableOpacity>
 
-                                </View>
-                            ) : (
-                                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-
-                                    <Text>not authaurized</Text>
-                                    <TouchableOpacity onPress={signOutHandler}><Text>Sign Out</Text></TouchableOpacity>
-
-                                </View>
-                            )
-                        }
-
-
-
-                    </>
+                    </View>
 
                 ) : (
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

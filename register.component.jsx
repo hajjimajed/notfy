@@ -3,6 +3,7 @@ import { RadioButton } from 'react-native-paper'
 import React, { useState, useContext } from "react";
 import firestore from '@react-native-firebase/firestore';
 import { signUpWithEmail, auth, signOutUser } from './firebase';
+import messaging from '@react-native-firebase/messaging'
 
 import { UserContext } from './user.context';
 
@@ -27,17 +28,25 @@ export default Register = () => {
             if (title === 'student') {
                 try {
                     await signUpWithEmail(email, password);
-                    const newStudentRef = await firestore()
-                        .collection('students')
-                        .add({
-                            name: username,
-                            email: email,
-                            title: title,
-                            uid: auth.currentUser.uid
-                        });
-                    const newStudentDoc = await newStudentRef.get();
-                    const newStudentData = { ...newStudentDoc.data(), id: newStudentDoc.id };
-                    const updatedCurrentUser = { uid: auth.currentUser.uid, email, title, ...newStudentData };
+
+                    const newStudentRef = firestore().collection('students').doc();
+                    const newStudentData = {
+                        name: username,
+                        email,
+                        title,
+                        uid: newStudentRef.id, // use document ID as unique student ID
+                    };
+                    await newStudentRef.set(newStudentData);
+
+                    // Generate a new FCM token for the student
+                    const fcmToken = await messaging().getToken();
+                    await messaging().deleteToken(); // delete the current token
+                    const newFcmToken = await messaging().getToken(); // generate a new token
+
+                    // Save the new FCM token in the student document with the unique student ID
+                    await firestore().collection('students').doc(newStudentRef.id).update({ fcmToken: newFcmToken });
+
+                    const updatedCurrentUser = { uid: newStudentRef.id, email, title, ...newStudentData };
                     setCurrentUser(updatedCurrentUser);
                     console.log('Student added!');
                 } catch (error) {
@@ -96,6 +105,7 @@ export default Register = () => {
                         <Text>
                             connected
                         </Text>
+                        <Text>{currentUser.name}</Text>
                         <Text>{currentUser.title}</Text>
 
                         <TouchableOpacity onPress={signOutHandler}><Text>Sign Out</Text></TouchableOpacity>
