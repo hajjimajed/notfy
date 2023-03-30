@@ -38,6 +38,9 @@ export default HomeScreen = () => {
                         <TouchableOpacity onPress={handleStudentsPress}>
                             <Text>Students</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={handleRegisterPress} >
+                            <Text>Register</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={signOutHandler}><Text>Sign Out</Text></TouchableOpacity>
 
                     </View>

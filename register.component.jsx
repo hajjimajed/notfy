@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper'
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import firestore from '@react-native-firebase/firestore';
 import { signUpWithEmail, auth, signOutUser } from './firebase';
 import messaging from '@react-native-firebase/messaging'
+
+import PushNotification from 'react-native-push-notification';
 
 import { UserContext } from './user.context';
 
@@ -34,7 +36,8 @@ export default Register = () => {
                         name: username,
                         email,
                         title,
-                        uid: newStudentRef.id, // use document ID as unique student ID
+                        uid: newStudentRef.id,
+                        status: 'void' // use document ID as unique student ID
                     };
                     await newStudentRef.set(newStudentData);
 
@@ -95,6 +98,29 @@ export default Register = () => {
         setCurrentUser(null);
     }
 
+
+
+
+    useEffect(() => {
+        if (!currentUser) {
+            return;
+        }
+
+        const statusRef = firestore().doc(`users/${currentUser.id}`);
+        const unsubscribe = statusRef.onSnapshot((doc) => {
+            const status = doc.data()?.status;
+            if (status) {
+                PushNotification.localNotification({
+                    title: 'Status Update',
+                    message: `Your status is now ${status}`,
+                });
+            }
+        });
+
+        return () => unsubscribe();
+    }, [currentUser]);
+
+
     return (
 
         <>
@@ -107,7 +133,7 @@ export default Register = () => {
                         </Text>
                         <Text>{currentUser.name}</Text>
                         <Text>{currentUser.title}</Text>
-
+                        <Text>{currentUser.status}</Text>
                         <TouchableOpacity onPress={signOutHandler}><Text>Sign Out</Text></TouchableOpacity>
                     </View>
                 ) : (

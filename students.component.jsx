@@ -1,38 +1,52 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import firestore from '@react-native-firebase/firestore';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { StudentsContext } from './students.context';
+import '@react-native-firebase/auth';
+import firebase from '@react-native-firebase/app';
+
+import PushNotification from 'react-native-push-notification';
 
 export default Students = () => {
+
     const { studentsMap } = useContext(StudentsContext);
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [statusInput, setStatusInput] = useState('');
 
-    const sendNotification = async (student) => {
-        console.log('Sending notification to', student.name);
-        try {
-            const studentRef = firestore().collection('students').doc(student.uid);
-            const studentDoc = await studentRef.get();
-            const studentData = studentDoc.data();
-            const fcmToken = studentData.fcmToken;
-            const message = {
-                data: {
-                    title: 'New notification',
-                    body: 'You have a new notification from your teacher',
-                },
-                notification: {
-                    title: 'New notification',
-                    body: 'You have a new notification from your teacher',
-                },
-                token: fcmToken,
-            };
-            await messaging().sendMessage(message);
-            console.log('Notification sent successfully');
-        } catch (error) {
-            console.log('Error sending notification:', error);
+    useEffect(() => {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
+        PushNotification.configure({
+            onNotification: function (notification) {
+                console.log(notification);
+            },
+            requestPermissions: true,
+        });
+    }, []);
+
+
+
+    const updateStudentStatus = async (studentId, status) => {
+        await firestore().collection('students').doc(studentId).update({ status });
+        const currentUser = firebase.auth().currentUser;
+        if (currentUser && currentUser.uid === studentId) {
+            PushNotification.localNotification({
+                title: 'Status Updated',
+                message: `Your status has been updated to ${status}.`,
+            });
         }
     };
 
+
+
+    const handleStatusSubmit = async () => {
+        if (selectedStudent && statusInput !== '') {
+            await updateStudentStatus(selectedStudent.uid, statusInput);
+            setStatusInput('');
+        }
+    };
 
 
     return (
@@ -44,9 +58,16 @@ export default Students = () => {
                 </TouchableOpacity>
             ))}
             {selectedStudent && (
-                <TouchableOpacity onPress={() => sendNotification(selectedStudent)}>
-                    <Text>Send Notification to {selectedStudent.name}</Text>
-                </TouchableOpacity>
+                <>
+                    <TextInput
+                        placeholder="Enter new status"
+                        value={statusInput}
+                        onChangeText={(text) => setStatusInput(text)}
+                    />
+                    <TouchableOpacity onPress={handleStatusSubmit}>
+                        <Text>Press me</Text>
+                    </TouchableOpacity>
+                </>
             )}
         </View>
     );

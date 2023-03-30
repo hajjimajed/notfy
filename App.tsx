@@ -12,7 +12,15 @@ import Students from './students.component'
 import { StudentsProvider } from "./students.context";
 import { UserProvider } from "./user.context";
 
+import OneSignal from "react-native-onesignal";
+
+
 export default function App() {
+
+  useEffect(() => {
+    OneSignal.setAppId('20e87a6e-54dd-4c22-81f5-2c18bb1ae12d');
+
+  }, [])
 
   const Stack = createNativeStackNavigator();
 
